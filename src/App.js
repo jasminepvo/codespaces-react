@@ -1,11 +1,40 @@
+import { useState, useEffect } from "react";
 function App() {
+
+  const [quote, setQuote] = useState([]);
+	const [author, setAuthor] = useState("");
+
+	useEffect(() => {
+    const category = 'happiness';
+    const apiKey = process.env.API_KEY;
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://api.api-ninjas.com/v1/quotes?category=${category}`, {
+          headers: { 'X-Api-Key': apiKey },
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setQuote(data);
+        setAuthor(data);
+        console.log(data)
+      } catch (error) {
+        console.error('Error: ', error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="bg-stone-500 h-screen p-2">
       <header className='text-stone-50 text-center'>
         <h1 className='text-4xl'>Thoughts in Transit</h1>
-        <p className="text-stone-300">"insert inspirational quote" -API</p>
-
+        <p>{quote}-{author}</p>
       </header>
+    
       <body className="text-stone-50">
         <p>Date: 08-03-23</p>
         <p>*option to choose random question of the day via API*</p>
